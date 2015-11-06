@@ -18,7 +18,10 @@ if __name__ == '__main__':
 	dbFactory = DBFactory.DBFactory()
 	database = dbFactory.resolve(dbtype)
 	dbconn = database.connect(userCreds)
-	queryresponse = database.query(dbconn, query)
+	qr = database.query(dbconn, query)
+
+	for row in qr:
+		print (row)
 
 	#print "Connection return %r" % dbconn
 	#print "Query response %s \n" % queryresponse

@@ -16,5 +16,6 @@ class MySQLDB(AbstractDatabase):
 	def query(self, conn, query):
 		cursor = conn.cursor()
 		cursor.execute(query)
-		for row in cursor:
-			print (row)
+		return cursor
+		#for row in cursor:
+		#	print (row)
