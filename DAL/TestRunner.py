@@ -1,4 +1,5 @@
 import DBFactory
+from Results import Results
 from Credentials import Credentials
 
 if __name__ == '__main__':
@@ -9,24 +10,28 @@ if __name__ == '__main__':
 	dbname = "cs419mysqldb"
 	dbtype = "MySql"
 	# query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA'.'COLUMNS' WHERE 'TABLE_SCHEMA'= 'cs419mysqldb' AND 'TABLE_NAME' = 'users'"
+	query = "INSERT INTO users(id, email,password,firstName, lastName) VALUES(null, 'test@test.com','Encrypted Password','John','Doe')"
 	query = "SELECT * FROM users"
-	#query = "INSERT INTO users(id, email,password,firstName, lastName) VALUES(null, 'test@test.com','Encrypted Password','John','Doe')"
-
 	userCreds = Credentials(username, password, hostname, dbname)
-
 	
 	dbFactory = DBFactory.DBFactory()
 	database = dbFactory.resolve(dbtype)
-	dbconn = database.connect(userCreds)
-	qr = database.query(dbconn, query)
+	if database.connect(userCreds): 
+		result = database.query(userCreds, query)
+		num = result.getnumrows() - 1
+		print "========================="
+		while num > 0:
+			print result.getrow(num)
+			num -= 1
 
-	for row in qr:
-		print (row)
+	query1 = "INSERT INTO users(id, email,password,firstName, lastName) VALUES(null, 'test34@test.com','Encrypted Password','Karen','Moss')"
+	database.query(userCreds, query1)
 
-	#print "Connection return %r" % dbconn
-	#print "Query response %s \n" % queryresponse
-	print "Username: %s " % userCreds.username
-	print "Password: %s " % userCreds.password
-	print "Host: %s " % userCreds.host
-	print "Dbname: %s " % userCreds.dbname
+	if database.connect(userCreds): 
+		result = database.query(userCreds, query)
+		num = result.getnumrows() - 1
+		print "========================="
+		while num > 0:
+			print result.getrow(num)
+			num -= 1
 
