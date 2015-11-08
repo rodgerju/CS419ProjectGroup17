@@ -2,7 +2,7 @@ import curses
 import curses.panel
 import time
 import sys
-import displayQueries
+#import displayQueries
 
 def login():
 	screen = curses.initscr()
@@ -12,6 +12,7 @@ def login():
 	dims = screen.getmaxyx()
 	screen.nodelay(0)
 	screen.clear()
+	screen.border(0)
 
 	selection = -1
 	option = 0
@@ -35,14 +36,16 @@ def login():
 			curses.echo(1)
 			curses.endwin()
 			return
-
+		
+		display = 1
 		if selection == 0:
-			userName = getInput(selection-3, 1, screen, dims) 
+			userName = getInput(selection-3, display, screen, dims) 
 			selection = -1
 			option += 1
 			
 		elif selection == 1:
-			pword = getInput(selection-3, 0, screen, dims)			
+			display = 0
+			pword = getpassword(selection-3, display, screen, dims)			
 			selection = -1
 			option += 1
 
@@ -52,12 +55,12 @@ def login():
 			option += 1
 
 		elif selection == 3:
-			dbName = getInput(selection-3, 1, screen, dims)
+			dbName = getInput(selection-3, display, screen, dims)
 			selection = -1	
 			option += 1
 
 		elif selection == 4:
-			hostName = getInput(selection-3, 1, screen, dims)
+			hostName = getInput(selection-3, display, screen, dims)
 			selection = -1	
 			option += 1
 		
@@ -71,10 +74,28 @@ def checkInput(userName, pword, dataBase, dbName, hostName):
 	if userName == "" or pword == "" or dataBase == "" or dbName == "" or hostName == "":
 		return 0
 
-def getInput(selection, pword, screen, dims):	
+def getpassword(selection, viewchr, screen, dims):
+	erase = ' ' * 50
 	screen.move(dims[0]/2+selection, dims[1]/3+10)
 	curses.curs_set(1)
-	curses.echo(pword)
+	#curses.echo(viewchr)
+	curses.nocbreak()
+	
+        screen.addstr((dims[0]/2)-2, (dims[1]/3)+10, erase)	
+	screen.move(dims[0]/2+selection, dims[1]/3+10)        
+        newInput = screen.getstr()	
+        hidepass = '*' * len(newInput) 
+	screen.addstr((dims[0]/2)-2, (dims[1]/3)+10, hidepass)
+	
+	curses.curs_set(0)
+	curses.cbreak()
+	curses.echo(0)
+	return newInput
+				
+def getInput(selection, viewchr, screen, dims):	
+	screen.move(dims[0]/2+selection, dims[1]/3+10)
+	curses.curs_set(1)
+	curses.echo(viewchr)
 	curses.nocbreak()
 	newInput = screen.getstr()
 	curses.curs_set(0)
