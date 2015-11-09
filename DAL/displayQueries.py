@@ -1,5 +1,6 @@
 import curses
 import curses.panel
+
 import time
 import sys
 import DBFactory
@@ -34,7 +35,6 @@ def connectDatabase(screen, userName, pword, dataBase, hostName, dbName):
 		#	for col in range(0, len(row)+1):
 		#		screen.addstr(row, col*10, queryresponse[row][col]) 
 	return
-
 
 
 

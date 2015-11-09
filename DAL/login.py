@@ -2,7 +2,7 @@ import curses
 import curses.panel
 import time
 import sys
-#import displayQueries
+import displayQueries
 
 def login():
 	screen = curses.initscr()
@@ -78,7 +78,7 @@ def getpassword(selection, viewchr, screen, dims):
 	erase = ' ' * 50
 	screen.move(dims[0]/2+selection, dims[1]/3+10)
 	curses.curs_set(1)
-	#curses.echo(viewchr)
+	curses.echo(viewchr)
 	curses.nocbreak()
 	
         screen.addstr((dims[0]/2)-2, (dims[1]/3)+10, erase)	
