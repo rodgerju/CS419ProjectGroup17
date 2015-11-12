@@ -30,6 +30,7 @@ class login(object):
 		dbtype = ""
 		dbname = ""
 		hostname = ""
+		erase = " " * (dims[1]-2)
 
 		while selection < 0:
 			self.printMenu(self.screen, dims, option)
@@ -46,56 +47,7 @@ class login(object):
 				curses.endwin()
 				return
 			
-<<<<<<< HEAD
-		elif selection == 1:
-			display = 0
-			pword = getpassword(selection-3, display, screen, dims)			
-			selection = -1
-			option += 1
 
-		elif selection == 2:
-			dataBase = getLanguage(selection-3, screen, dims)
-			selection = -1
-			option += 1
-
-		elif selection == 3:
-			dbName = getInput(selection-3, display, screen, dims)
-			selection = -1	
-			option += 1
-
-		elif selection == 4:
-			hostName = getInput(selection-3, display, screen, dims)
-			selection = -1	
-			option += 1
-		
-		elif selection == 5:
-			if checkInput(userName, pword, dataBase, dbName, hostName) != 0:
-				displayQueries.connectDatabase(screen, userName, pword, dataBase, hostName, dbName)				
-				screen.clear()
-			selection = -1
-
-def checkInput(userName, pword, dataBase, dbName, hostName):
-	if userName == "" or pword == "" or dataBase == "" or dbName == "" or hostName == "":
-		return 0
-
-def getpassword(selection, viewchr, screen, dims):
-	erase = ' ' * 50
-	screen.move(dims[0]/2+selection, dims[1]/3+10)
-	curses.curs_set(1)
-	curses.echo(viewchr)
-	curses.nocbreak()
-	
-        screen.addstr((dims[0]/2)-2, (dims[1]/3)+10, erase)	
-	screen.move(dims[0]/2+selection, dims[1]/3+10)        
-        newInput = screen.getstr()	
-        hidepass = '*' * len(newInput) 
-	screen.addstr((dims[0]/2)-2, (dims[1]/3)+10, hidepass)
-	
-	curses.curs_set(0)
-	curses.cbreak()
-	curses.echo(0)
-	return newInput
-=======
 			display = 1
 			if selection == 0:
 				username = self.getInput(selection-3, display, self.screen, dims) 
@@ -124,7 +76,8 @@ def getpassword(selection, viewchr, screen, dims):
 				option += 1
 			
 			elif selection == 5:
-				self.credentials = Credentials("cs419user", "password", "db4free.net", "cs419mysqldb")
+				self.credentials = Credentials(username,password,dbname,hostname)
+ #Credentials("cs419user", "password", "db4free.net", "cs419mysqldb")
 				if self.checkInput(self.credentials, dbtype) != 0:
 					dbFactory = DBFactory.DBFactory()
 					database = dbFactory.resolve(dbtype)					
@@ -134,11 +87,15 @@ def getpassword(selection, viewchr, screen, dims):
 						selection = -1
 						return True
 					else:
-					#	TODO: NEED TO IMPLEMENT ERROR HANDLING FOR FAILED LOGIN
+						self.screen.addstr((dims[0]//2)+5, 1, erase)
+						self.screen.addstr((dims[0]//2)+5, (dims[1]//3)-10, "***Error: DB connection failed.***", curses.A_BOLD)		
 						selection = -1
-						return False
-														
->>>>>>> f12c161df4052905e7de4b485ed6a7d3a6ba9eae
+						continue	
+				else:
+					self.screen.addstr((dims[0]//2)+5, 1, erase)
+					self.screen.addstr((dims[0]//2)+5, (dims[1]//3)-10, "***Error: Please enter a value in every field.***", curses.A_BOLD)
+					selection = -1
+					continue										
 				
 	def getcredentials(self):
 		return self.credentials
@@ -154,7 +111,7 @@ def getpassword(selection, viewchr, screen, dims):
 			return 0
 
 	def getpassword(self, selection, viewchr, screen, dims):
-		erase = ' ' * 50
+		erase = ' ' * 20
 		self.screen.move(dims[0]/2+selection, dims[1]/3+10)
 		curses.curs_set(1)
 		#curses.echo(viewchr)
