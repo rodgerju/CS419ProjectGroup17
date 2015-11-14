@@ -22,7 +22,8 @@ class displayQueries(object):
 		panelq = curses.panel.new_panel(qwin)
 		panelt = curses.panel.new_panel(twin)
 
-		while query != "/quit":			
+		while query != "/quit":		
+
 			curses.panel.update_panels()
 			curses.doupdate()	
 			screen.move((dims[0]+1)-(dims[0]//4), 3)
@@ -33,17 +34,17 @@ class displayQueries(object):
 			if query == "/quit":
 				continue
 			if query != "": 
+				dwin.clear()	
 				dwin.addstr(1, 1, "(Select \"Enter\" to expand window)", curses.A_UNDERLINE)
 				result = database.query(credentials, query)
 				numrows = result.getnumrows()
 				rc = 2 					
 				dwin.addstr(rc, 1, str(result.getcolumns()))
-				if(numrows > 0):	
-					rc +=1	
-					while num > 0:
-						dwin.addstr(rc, 1, str(result.getrow(num-1)))
-						num -= 1	
-						rc +=1
+				rc +=1						
+				while numrows > 0:
+					dwin.addstr(rc, 1, str(result.getrow(numrows-1)))
+					numrows -= 1	
+					rc +=1
 			else:
 				if num == 1:
 					num+=1
