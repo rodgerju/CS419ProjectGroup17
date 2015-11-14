@@ -4,12 +4,14 @@ class Results:
 		self.columns = ""
 		self.rows = []
 		self.numrows = 0	
+		self.numcols = 0
 
 	def addrow(self, row):
-		self.rows.append(row)		
+		self.rows.append(row)	
+		self.numrows += 1	
 
-	def setnumrows(self, num):
-		self.numrows = num
+	def setnumcolumns(self, num):
+		self.numcols = num
 
 	def setcolumns(self, columns):
 		self.columns = columns

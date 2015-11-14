@@ -36,16 +36,13 @@ class displayQueries(object):
 				dwin.addstr(1, 1, "(Select \"Enter\" to expand window)", curses.A_UNDERLINE)
 				result = database.query(credentials, query)
 				numrows = result.getnumrows()
-				rc += 1 	
-				cc += 1
+				rc = 2 					
+				dwin.addstr(rc, 1, str(result.getcolumns()))
 				if(numrows > 0):	
-					dwin.addstr(rc, cc*10, str(result.getcolumns()))
-					cc +=1 
 					rc +=1	
 					while num > 0:
-						dwin.addstr(rc, 2, str(result.getrow(num-1)))
-						num -= 1				
-			 			cc +=1 
+						dwin.addstr(rc, 1, str(result.getrow(num-1)))
+						num -= 1	
 						rc +=1
 			else:
 				if num == 1:

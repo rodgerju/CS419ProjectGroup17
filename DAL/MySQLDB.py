@@ -41,10 +41,10 @@ class MySQLDB(AbstractDatabase):
 			raise ex
 
 	def extractdata(self, result, cursor):
-		result.setnumrows(len(cursor.description))
+		result.setnumcolumns(len(cursor.description))
 		result.setcolumns([i[0] for i in cursor.description])
 		for row in cursor:
-				result.addrow(row)
+			result.addrow(row)
 
 	def commitchanges(self, conn):
 		try:
