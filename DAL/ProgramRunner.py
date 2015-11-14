@@ -15,5 +15,6 @@ if __name__ == '__main__':
 		screen = login.getscreen()		
 		session = displayQueries()
 		session.querySession(screen, credentials, database)
+
 	#Need to print error message here: Failed login
 	#else:

@@ -35,12 +35,18 @@ class displayQueries(object):
 			if query != "": 
 				dwin.addstr(1, 1, "(Select \"Enter\" to expand window)", curses.A_UNDERLINE)
 				result = database.query(credentials, query)
-				num = result.getnumrows() - 1
-				rc = 0				
-				while num > 0:
-					dwin.addstr(rc+2, 2, str(result.getrow(num)))
-					num -= 1				
-			 		rc += 1
+				numrows = result.getnumrows()
+				rc += 1 	
+				cc += 1
+				if(numrows > 0):	
+					dwin.addstr(rc, cc*10, str(result.getcolumns()))
+					cc +=1 
+					rc +=1	
+					while num > 0:
+						dwin.addstr(rc, 2, str(result.getrow(num-1)))
+						num -= 1				
+			 			cc +=1 
+						rc +=1
 			else:
 				if num == 1:
 					num+=1

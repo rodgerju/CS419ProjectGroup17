@@ -1,12 +1,21 @@
 class Results:
 
 	def __init__(self):
+		self.columns = ""
 		self.rows = []
 		self.numrows = 0	
 
 	def addrow(self, row):
-		self.rows.append(row)	
-		self.numrows += 1	
+		self.rows.append(row)		
+
+	def setnumrows(self, num):
+		self.numrows = num
+
+	def setcolumns(self, columns):
+		self.columns = columns
+
+	def getcolumns(self):
+		return self.columns
 
 	def getnumrows(self):
 		return self.numrows
