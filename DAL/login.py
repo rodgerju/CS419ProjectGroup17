@@ -76,8 +76,8 @@ class login(object):
 				option += 1
 			
 			elif selection == 5:
-				self.credentials = Credentials(username,password,dbname,hostname)
- #Credentials("cs419user", "password", "db4free.net", "cs419mysqldb")
+				self.credentials = Credentials("cs419user", "password", "db4free.net", "cs419mysqldb") 
+				#Credentials(username,password,dbname,hostname) 				
 				if self.checkInput(self.credentials, dbtype) != 0:
 					dbFactory = DBFactory.DBFactory()
 					database = dbFactory.resolve(dbtype)					
