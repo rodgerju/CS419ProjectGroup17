@@ -1,26 +1,28 @@
 class Results:
 
-	def __init__(self):
-		self.columns = ""
-		self.rows = []
-		self.numrows = 0	
-		self.numcols = 0
+	def __init__(self):		
+		self.table = []
+		self.numrows = 0		
+		self.affected = 0	
 
-	def addrow(self, row):
-		self.rows.append(row)	
-		self.numrows += 1	
+	def populatetable(self, data):	
+		self.table.append([i[0] for i in data.description])
+		count = 0
+		for row in data:
+			self.table.append(row)
+			count += 1		
+		self.numrows = count	
 
-	def setnumcolumns(self, num):
-		self.numcols = num
+	def rowsaffected(self, data):
+		self.rowsaffected = data.rowcount
 
-	def setcolumns(self, columns):
-		self.columns = columns
+	def gettable(self):
+		return self.table	
 
-	def getcolumns(self):
-		return self.columns
-
-	def getnumrows(self):
+	def getrowcount(self):
 		return self.numrows
 
-	def getrow(self, num):
-		return self.rows[num]
+	def getrowsaffected(self):
+		return self.rowsaffected
+	
+
