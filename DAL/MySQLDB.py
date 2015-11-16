@@ -32,8 +32,9 @@ class MySQLDB(AbstractDatabase):
 			command = self.parsecommand(query)
 			result = Results()
 			if (command != "select"):
-				self.commitchanges(conn)			
-			else:				
+				self.commitchanges(conn)	
+				result.rowsaffected(cursor)
+			else:
 				result.populatetable(cursor)			
 			cursor.close()
 			return result	

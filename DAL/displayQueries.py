@@ -39,7 +39,8 @@ class displayQueries(object):
 				result = database.query(credentials, query)
 				if(result.getrowcount() > 0):
 					self.printtable(result,dwin)
-				
+				else:
+					dwin.addstr(2, 1, str(result.getrowsaffected()) + " row(s) affected.")				
 			else:
 				if num == 1:
 					num+=1
