@@ -37,14 +37,9 @@ class displayQueries(object):
 				dwin.clear()	
 				dwin.addstr(1, 1, "(Select \"Enter\" to expand window)", curses.A_UNDERLINE)
 				result = database.query(credentials, query)
-				numrows = result.getnumrows()
-				rc = 2 					
-				dwin.addstr(rc, 1, str(result.getcolumns()))
-				rc +=1						
-				while numrows > 0:
-					dwin.addstr(rc, 1, str(result.getrow(numrows-1)))
-					numrows -= 1	
-					rc +=1
+				if(result.getrowcount() > 0):
+					self.printtable(result,dwin)
+				
 			else:
 				if num == 1:
 					num+=1
@@ -63,7 +58,6 @@ class displayQueries(object):
 		if newData:
 			for i in range(len(newData)):
 				tableWin.addstr(i+3, 2, newData[i])
-
 		return tableWin
 
 	def queryScreen(self, screen):
@@ -73,7 +67,6 @@ class displayQueries(object):
 		queryWin.box()
 		queryWin.addstr(1, 1, "$")
 		queryWin.move(1,3)
-
 		return queryWin
 
 	def displayScreen(self, screen):
@@ -81,5 +74,18 @@ class displayQueries(object):
 		disWin = curses.newwin((dims[0]-(dims[0]//4)), dims[1], 0, 0)
 		disWin.box()
 		disWin.addstr(1, 1, "Display Queries:", curses.A_UNDERLINE)
-		
 		return disWin	
+
+	def printtable(self, result, window):
+		table = result.gettable()
+		rc = 2
+		cc = 0
+		for row in table:
+			for column in row:
+				try:							
+  		 			window.addstr(rc, cc*15, str(column))	
+  		 			cc+=1	 		
+  		 		except curses.error:
+  		 			pass
+  		 	rc+=1
+  		 	cc=0

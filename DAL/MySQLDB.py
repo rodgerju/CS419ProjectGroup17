@@ -33,18 +33,12 @@ class MySQLDB(AbstractDatabase):
 			result = Results()
 			if (command != "select"):
 				self.commitchanges(conn)			
-			else:
-				self.extractdata(result, cursor)			
+			else:				
+				result.populatetable(cursor)			
 			cursor.close()
 			return result	
 		except Exception as ex:
-			raise ex
-
-	def extractdata(self, result, cursor):
-		result.setnumcolumns(len(cursor.description))
-		result.setcolumns([i[0] for i in cursor.description])
-		for row in cursor:
-			result.addrow(row)
+			raise ex	
 
 	def commitchanges(self, conn):
 		try:
