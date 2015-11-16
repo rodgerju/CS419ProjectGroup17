@@ -114,7 +114,7 @@ class login(object):
 		erase = ' ' * 20
 		self.screen.move(dims[0]/2+selection, dims[1]/3+10)
 		curses.curs_set(1)
-		#curses.echo(viewchr)
+		curses.echo(viewchr)
 		curses.nocbreak()
 		
 	        self.screen.addstr((dims[0]/2)-2, (dims[1]/3)+10, erase)	
