@@ -75,18 +75,44 @@ class displayQueries(object):
 		disWin = curses.newwin((dims[0]-(dims[0]//4)), dims[1], 0, 0)
 		disWin.box()
 		disWin.addstr(1, 1, "Display Queries:", curses.A_UNDERLINE)
+
 		return disWin	
 
 	def printtable(self, result, window):
+		cols= {"id": 3, "name": 10, "firstName": 10, "lastName": 10, "email": 20, "date": 12, "phone": 14}
+
+		dims = window.getmaxyx()
+		window.box()
 		table = result.gettable()
 		rc = 2
 		cc = 0
+		colsize = []
+		s = [] 
+		defaultSize = 15
+
 		for row in table:
+			
 			for column in row:
-				try:							
-  		 			window.addstr(rc, cc*15, str(column))	
-  		 			cc+=1	 		
-  		 		except curses.error:
-  		 			pass
+				if rc < 3:
+					if cc == 0:
+						if str(column) in cols:
+							colsize.append(cols[str(column)])
+						else:
+							colsize.append(defaultSize)		
+						window.addstr(rc, 2, str(column))	
+						s.append(colsize[cc]+3)
+					else:
+						if str(column) in cols:
+							colsize.append(colsize[cc-1] + cols[str(column)])
+						else:
+							colsize.append(colsize[cc-1] + defaultSize)
+						window.addstr(rc, s[cc-1], str(column))
+						s.append(colsize[cc]+1)
+				else:
+					if cc == 0:
+						window.addstr(rc, 2, str(column))
+					else:
+  		 				window.addstr(rc, s[cc-1], str(column)) 	
+				cc+=1
   		 	rc+=1
   		 	cc=0
