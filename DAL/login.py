@@ -76,8 +76,8 @@ class login(object):
 				option += 1
 			
 			elif selection == 5:
-				self.credentials = Credentials("cs419user", "password", "db4free.net", "cs419mysqldb") 
-				#Credentials(username,password,dbname,hostname) 				
+				#self.credentials = Credentials("cs419user", "password", "db4free.net", "cs419mysqldb") 
+				self.credentials = Credentials(username,password,hostname,dbname) 				
 				if self.checkInput(self.credentials, dbtype) != 0:
 					dbFactory = DBFactory.DBFactory()
 					database = dbFactory.resolve(dbtype)					
@@ -160,9 +160,3 @@ class login(object):
 		self.screen.addstr((dims[0]/2)+1, dims[1]/3, 'Hostname', graphics[4])
 		self.screen.addstr((dims[0]/2)+2, dims[1]/3, 'Login', graphics[5])
 		self.screen.refresh()
-
-	def dataView():
-		#why is this function here?
-		self.screen.clear()
-		
-
