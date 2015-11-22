@@ -1,5 +1,6 @@
 import curses
 import curses.panel
+import curses.textpad
 import time
 import sys
 import DBFactory
@@ -38,7 +39,7 @@ class displayQueries(object):
 				dwin.addstr(1, 1, "(Select \"Enter\" to expand window)", curses.A_UNDERLINE)
 				result = database.query(credentials, query)
 				if(result.getrowcount() > 0):
-					self.printtable(result,dwin)
+					self.printtable2(result,dwin)
 				else:
 					dwin.addstr(2, 1, str(result.getrowsaffected()) + " row(s) affected.")				
 			else:
@@ -79,40 +80,122 @@ class displayQueries(object):
 		return disWin	
 
 	def printtable(self, result, window):
-		cols= {"id": 3, "name": 10, "firstName": 10, "lastName": 10, "email": 20, "date": 12, "phone": 14}
-
 		dims = window.getmaxyx()
 		window.box()
 		table = result.gettable()
 		rc = 2
 		cc = 0
+		count = 3 
 		colsize = []
 		s = [] 
 		defaultSize = 15
-
 		for row in table:
-			
 			for column in row:
 				if rc < 3:
 					if cc == 0:
-						if str(column) in cols:
-							colsize.append(cols[str(column)])
+						if len(str(column)) > 15:
+							tmp = str(column)
+							abr = tmp[:11] + "..."	
+							window.addstr(rc*2, 2, abr)
 						else:
-							colsize.append(defaultSize)		
-						window.addstr(rc, 2, str(column))	
-						s.append(colsize[cc]+3)
-					else:
-						if str(column) in cols:
-							colsize.append(colsize[cc-1] + cols[str(column)])
-						else:
-							colsize.append(colsize[cc-1] + defaultSize)
-						window.addstr(rc, s[cc-1], str(column))
+							window.addstr(rc*2, 2, str(column))	
+						colsize.append(defaultSize+2)
+						curses.textpad.rectangle(window, count, 1, count+2, colsize[cc])
 						s.append(colsize[cc]+1)
+					else:
+						colsize.append(colsize[cc-1] + defaultSize)
+						s.append(colsize[cc]+1)
+						if len(str(column)) > 15:
+							tmp = str(column)
+							abr = tmp[:11] + "..."	
+							window.addstr(rc*2, s[cc-1], abr)
+						else:
+							window.addstr(rc*2, s[cc-1], str(column))
+						curses.textpad.rectangle(window, count, s[cc-1]-1, count+2, s[cc])
 				else:
 					if cc == 0:
-						window.addstr(rc, 2, str(column))
+						if len(str(column)) > 15:
+							tmp = str(column)
+							abr = tmp[:11] + "..."	
+							window.addstr(rc*2, 2, abr)
+						else:
+							window.addstr(rc*2, 2, str(column))
+						curses.textpad.rectangle(window, count, 1, count+2, s[cc])
 					else:
-  		 				window.addstr(rc, s[cc-1], str(column)) 	
+						if len(str(column)) > 15:
+							tmp = str(column)
+							abr = tmp[:11] + "..."
+							window.addstr(rc*2, s[cc-1], abr)
+						else:
+  		 					window.addstr(rc*2, s[cc-1], str(column)) 	
+						curses.textpad.rectangle(window, count, s[cc-1]-1, count+2, s[cc])
 				cc+=1
   		 	rc+=1
   		 	cc=0
+			count+=2
+
+	def printtable2(self, result, win):
+		dims = win.getmaxyx()
+		win.box()
+		table = result.gettable()
+		rc = 2
+		cc = 0
+		count = 1
+		colsize = []
+		defaultSize = 15
+		for row in table:
+			for column in row:
+				if rc < 3:
+					if cc == 0:
+						colsize.append(defaultSize+1)
+						if len(str(column)) > 14:
+							tmp = str(column)
+							abr = tmp[:11] + "..."
+							win.addstr(rc*2+1, 2, abr)
+						else:
+							win.addstr(rc*2+1, 2, str(column))
+						win.addstr(rc*2, 1, "+-------------+")
+						win.addstr(rc*2+1, 1, "|")
+						#win.addstr(rc*2+1, 2, str(column))
+						win.addstr(rc*2+1, colsize[cc]-1, "|")
+						win.addstr(rc*2+2, colsize[cc]-1, "+-------------+")
+					else:
+						colsize.append(colsize[cc-1]+defaultSize)
+						win.addstr(rc*2, colsize[cc-1], "--------------+")
+						if len(str(column)) > 14:
+							tmp = str(column)
+							abr = tmp[:11] + "..."
+							win.addstr(rc*2+1, colsize[cc-1], abr)
+						else:
+							win.addstr(rc*2+1, colsize[cc-1], str(column))	
+						win.addstr(rc*2+1, colsize[cc]-1, "|")
+						win.addstr(rc*2+2, colsize[cc-1], "--------------+")
+				else:
+					if cc == 0:
+						win.addstr(rc*2, 1, "+-------------+")
+						win.addstr(rc*2+1, 1, "|")
+						if len(str(column)) > 14:
+							tmp = str(column)
+							abr = tmp[:11] + "..."
+							win.addstr(rc*2+1, 2, abr)
+						else:
+							win.addstr(rc*2+1, 2, str(column))
+						win.addstr(rc*2+1, colsize[cc]-1, "|")
+						win.addstr(rc*2+2, 1, "+-------------+")
+		
+					else:
+						win.addstr(rc*2, colsize[cc-1], "--------------+")
+						if len(str(column)) > 14:
+							tmp = str(column)
+							abr = tmp[:11] + "..."
+							win.addstr(rc*2+1, colsize[cc-1], abr)
+						else:
+							win.addstr(rc*2+1, colsize[cc-1], str(column))
+						win.addstr(rc*2+1, colsize[cc]-1, "|")
+						win.addstr(rc*2+2, colsize[cc-1], "--------------+")
+
+							
+				cc+=1
+			rc+=1
+			cc=0	
+			count+=2
