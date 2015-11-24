@@ -37,11 +37,14 @@ class displayQueries(object):
 			if query != "": 
 				dwin.clear()	
 				dwin.addstr(1, 1, "(Select \"Enter\" to expand window)", curses.A_UNDERLINE)
-				result = database.query(credentials, query)
-				if(result.getrowcount() > 0):
-					self.printtable2(result,dwin)
-				else:
-					dwin.addstr(2, 1, str(result.getrowsaffected()) + " row(s) affected.")				
+				try:
+					result = database.query(credentials, query)
+					if(result.getrowcount() > 0):
+						self.printtable2(result,dwin)
+					else:
+						dwin.addstr(2, 1, str(result.getrowsaffected()) + " row(s) affected.")				
+				except Exception as ex:
+					dwin.addstr(2, 1, str(ex))
 			else:
 				if num == 1:
 					num+=1
