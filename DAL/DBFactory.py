@@ -5,7 +5,5 @@ class DBFactory(object):
 
 	def resolve(dbtype):		
 		if dbtype == "MySql": return MySQLDB()
-		#to be implemented
-		if dbtype == "PostgreSql": return PostgreSql()
-
+		if dbtype == "PostgreSQL": return PostgreSQL()
 	resolve = staticmethod(resolve)
