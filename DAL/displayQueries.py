@@ -45,7 +45,7 @@ class displayQueries(object):
 						curses.doupdate()					
 						result = database.query(credentials, query)
 						if(result.getrowcount() > 0):
-							self.printtable2(result,dwin,0)
+							self.printtable(result,dwin,0)
 						else:
 							dwin.addstr(2, 1, str(result.getrowsaffected()) + " row(s) affected.")				
 					except Exception as ex:
@@ -72,7 +72,7 @@ class displayQueries(object):
 				if result != "":
 					dwin.clear()
 					dwin.addstr(1, 1, "(Press \"Tab\" to query)", curses.A_UNDERLINE)
-					self.printtable2(result,dwin,0)
+					self.printtable(result,dwin,0)
 					curses.panel.update_panels()
 					curses.doupdate()
 					paneld.top()
@@ -90,7 +90,7 @@ class displayQueries(object):
 	def tableScreen(self, screen, newData):
 		dims = screen.getmaxyx()
 		begin = dims[1]-(dims[1]//4)
-		tableWin = curses.newwin(dims[0], (dims[1]//4), 0, begin)
+		tableWin = curses.newwin((dims[0]-(dims[0]//4)), (dims[1]//4), 0, begin)
 		tableWin.box()
 		tableWin.addstr(1, 2, "DB-Tables:", curses.A_UNDERLINE)
 		if newData:
@@ -128,7 +128,7 @@ class displayQueries(object):
 					pageNum = 0
 				dwin.clear()	
 				dwin.addstr(1, 1, "(Press \"Tab\" to query)", curses.A_UNDERLINE)
-				self.printtable2(result,dwin, pageNum)
+				self.printtable(result,dwin, pageNum)
 				selection = -1
 			elif selection == 0:
 				pageNum += 1
@@ -136,7 +136,7 @@ class displayQueries(object):
 					pageNum -= 1				
 				dwin.clear()	
 				dwin.addstr(1, 1, "(Press \"Tab\" to query)", curses.A_UNDERLINE)
-				self.printtable2(result,dwin, pageNum)
+				self.printtable(result,dwin, pageNum)
 				selection = -1
 
 	def printOptions(self, screen, paneld, option):
@@ -152,7 +152,7 @@ class displayQueries(object):
 	def queryScreen(self, screen):
 		dims = screen.getmaxyx()
 		begin = dims[0]-(dims[0]//4)		
-		queryWin = curses.newwin((dims[0]//4), dims[1]-(dims[1]//4)+1, begin, 0)
+		queryWin = curses.newwin((dims[0]//4), dims[1], begin, 0)
 		queryWin.box()
 		queryWin.addstr(1, 1, "$")
 		queryWin.move(1,3)
@@ -164,79 +164,111 @@ class displayQueries(object):
 		disWin.box()
 		disWin.addstr(1, 1, "Display Queries:", curses.A_UNDERLINE)
 		return disWin	
+			
+	def getColSizes(self, win, obj):
+		dims = win.getmaxyx()		
+		rownum = 1
+		aveCol = 0
+		setMax = 0
+		total = 0
+		maxSize = 0
+		sizes = []
+		numcols = 0
+		for row in obj:
+			i = 0
+			for col in row:
+				total += len(str(col))				
+				if rownum == 1:
+					sizes.append(len(str(col)))
+				if rownum > 1:
+					if sizes[i] < len(str(col)):
+						sizes[i] = len(str(col))
+				i += 1
+			numcols = i
+			rownum += 1			
+			if (total+(numcols+1)) > dims[1]:
+				setMax = 1			
+			total = 0
+		if setMax == 1:
+			aveCol = ((dims[1]-(numcols+1))/numcols)
+		return sizes, setMax, aveCol, numcols
 
-	def printtable2(self, result, win, startRow):
-		dims = win.getmaxyx()
-		win.box()
+	def printtable(self, result, window, startRow):
+		dims = window.getmaxyx()
+		window.box()
 		displayRows = 3
 		header = 0
 		table = 0
 		header = list(result.getheader())
-		table = list(result.gettable())	
+		table = list(result.gettable())
 		rc = 2
 		cc = 0
-		count = 1
+		count = 3 
 		colsize = []
-		defaultSize = 15
 		if result.getrowcount() < (startRow * displayRows) + displayRows:
 			printRange = result.getrowcount()
 		else:
 			printRange = (startRow * displayRows) + displayRows
 		for i in range((startRow * displayRows), printRange):
 			header.append(list(table[i]))
+		maxWidth, setCol, colAve, x = self.getColSizes(window, header)
 		for row in header:
-			for column in row:			
-				if rc < 3:
-					if cc == 0:
-						colsize.append(defaultSize+1)
-						if len(str(column)) > 14:
-							tmp = str(column)
-							abr = tmp[:11] + "..."
-							win.addstr(rc*2+1, 2, abr)
+			for column in row:
+				if setCol == 1:
+					if rc < 3:
+						if cc == 0:
+							if len(str(column)) > colAve:
+								tmp = str(column)
+								abr = tmp[:colAve-3] + "..."	
+								window.addstr(rc*2, 2, abr)
+							else:
+								window.addstr(rc*2, 2, str(colAve))	
+							colsize.append(colAve+2)
+							curses.textpad.rectangle(window, count, 1, count+2, colsize[cc])
 						else:
-							win.addstr(rc*2+1, 2, str(column))
-						win.addstr(rc*2, 1, "+-------------+")
-						win.addstr(rc*2+1, 1, "|")
-						#win.addstr(rc*2+1, 2, str(column))
-						win.addstr(rc*2+1, colsize[cc]-1, "|")
-						win.addstr(rc*2+2, colsize[cc]-1, "+-------------+")
+							colsize.append(colsize[cc-1] + colAve + 1)
+							if len(str(column)) > colAve:
+								tmp = str(column)
+								abr = tmp[:colAve-3] + "..."	
+								window.addstr(rc*2, colsize[cc-1]+1, abr)
+							else:
+								window.addstr(rc*2, colsize[cc-1]+1, str(column))
+							curses.textpad.rectangle(window, count, colsize[cc-1], count+2, colsize[cc])
 					else:
-						colsize.append(colsize[cc-1]+defaultSize)
-						win.addstr(rc*2, colsize[cc-1], "--------------+")
-						if len(str(column)) > 14:
-							tmp = str(column)
-							abr = tmp[:11] + "..."
-							win.addstr(rc*2+1, colsize[cc-1], abr)
+						if cc == 0:
+							if len(str(column)) > colAve:
+								tmp = str(column)
+								abr = tmp[:colAve-3] + "..."	
+								window.addstr(rc*2, 2, abr)
+							else:
+								window.addstr(rc*2, 2, str(column))
+							curses.textpad.rectangle(window, count, 1, count+2, colsize[cc])
 						else:
-							win.addstr(rc*2+1, colsize[cc-1], str(column))	
-						win.addstr(rc*2+1, colsize[cc]-1, "|")
-						win.addstr(rc*2+2, colsize[cc-1], "--------------+")
+							if len(str(column)) > colAve:
+								tmp = str(column)
+								abr = tmp[:colAve-3] + "..."
+								window.addstr(rc*2, colsize[cc-1]+1, abr)
+							else:
+	  		 					window.addstr(rc*2, colsize[cc-1]+1, str(column)) 	
+							curses.textpad.rectangle(window, count, colsize[cc-1], count+2, colsize[cc])
 				else:
-					if cc == 0:
-						win.addstr(rc*2, 1, "+-------------+")
-						win.addstr(rc*2+1, 1, "|")
-						if len(str(column)) > 14:
-							tmp = str(column)
-							abr = tmp[:11] + "..."
-							win.addstr(rc*2+1, 2, abr)
+					if rc < 3:
+						if cc == 0:
+							window.addstr(rc*2, 2, str(column))	
+							colsize.append(maxWidth[cc]+2)
+							curses.textpad.rectangle(window, count, 1, count+2, colsize[cc])
 						else:
-							win.addstr(rc*2+1, 2, str(column))
-						win.addstr(rc*2+1, colsize[cc]-1, "|")
-						win.addstr(rc*2+2, 1, "+-------------+")
-		
+							colsize.append(colsize[cc-1] + maxWidth[cc] + 1)
+							window.addstr(rc*2, colsize[cc-1]+1, str(column))
+							curses.textpad.rectangle(window, count, colsize[cc-1], count+2, colsize[cc])
 					else:
-						win.addstr(rc*2, colsize[cc-1], "--------------+")
-						if len(str(column)) > 14:
-							tmp = str(column)
-							abr = tmp[:11] + "..."
-							win.addstr(rc*2+1, colsize[cc-1], abr)
+						if cc == 0:
+							window.addstr(rc*2, 2, str(column))
+							curses.textpad.rectangle(window, count, 1, count+2, colsize[cc])
 						else:
-							win.addstr(rc*2+1, colsize[cc-1], str(column))
-						win.addstr(rc*2+1, colsize[cc]-1, "|")
-						win.addstr(rc*2+2, colsize[cc-1], "--------------+")
-
-							
+							window.addstr(rc*2, colsize[cc-1]+1, str(column)) 	
+							curses.textpad.rectangle(window, count, colsize[cc-1], count+2, colsize[cc])
 				cc+=1
-			rc+=1
-			cc=0	
+  		 	rc+=1
+  		 	cc=0
 			count+=2
