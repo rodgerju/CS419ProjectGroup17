@@ -36,17 +36,16 @@ class login(object):
 			self.printMenu(self.screen, dims, option)
 			action = self.screen.getch()
 			if action == curses.KEY_UP:
-				option = (option - 1) % 6
+				option = (option - 1) % 7
 			elif action == curses.KEY_DOWN:
-				option = (option + 1) % 6
+				option = (option + 1) % 7
 			elif action == ord('\n'):
 				selection = option
 			elif action == ord('q'):
 				self.screen.clear()
 				curses.echo(1)
 				curses.endwin()
-				return
-			
+				return			
 
 			display = 1
 			if selection == 0:
@@ -74,10 +73,16 @@ class login(object):
 				hostname = self.getInput(selection-3, display, self.screen, dims)
 				selection = -1	
 				option += 1
-			
+
 			elif selection == 5:
-				#self.credentials = Credentials("cs419user", "password", "db4free.net", "cs419mysqldb") 
-				self.credentials = Credentials(username,password,hostname,dbname) 				
+				port = self.getInput(selection-3, display, self.screen, dims)
+				selection = -1	
+				option += 1
+			
+			elif selection == 6:
+			#	self.credentials = Credentials("cs", "password", "db4free.net", "cs419mysqldb") 
+				self.credentials = Credentials(username,password,hostname,port,dbname) 				
+			#	self.credentials = Credentials("kzwjzqlulxolgt", "2oPmzkAWGOIwc9GlauZa26jeBW", "ec2-54-204-40-209.compute-1.amazonaws.com", "5432", "d38ker1opds5h3") 
 				if self.checkInput(self.credentials, dbtype) != 0:
 					dbFactory = DBFactory.DBFactory()
 					database = dbFactory.resolve(dbtype)					
@@ -151,12 +156,13 @@ class login(object):
 				return dataList[optionData]
 
 	def printMenu(self, screen, dims, option):	
-		graphics = [0]*6
+		graphics = [0]*7
 		graphics[option] = curses.A_REVERSE
 		self.screen.addstr((dims[0]/2)-3, dims[1]/3, 'Username', graphics[0])
 		self.screen.addstr((dims[0]/2)-2, dims[1]/3, 'Password', graphics[1])
 		self.screen.addstr((dims[0]/2)-1, dims[1]/3, 'Database', graphics[2])
 		self.screen.addstr((dims[0]/2), dims[1]/3, 'DB Name', graphics[3])
 		self.screen.addstr((dims[0]/2)+1, dims[1]/3, 'Hostname', graphics[4])
-		self.screen.addstr((dims[0]/2)+2, dims[1]/3, 'Login', graphics[5])
+		self.screen.addstr((dims[0]/2)+2, dims[1]/3, 'Port', graphics[5])
+		self.screen.addstr((dims[0]/2)+3, dims[1]/3, 'Login', graphics[6])
 		self.screen.refresh()
