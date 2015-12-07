@@ -191,7 +191,7 @@ class displayQueries(object):
 			total = 0
 		if setMax == 1:
 			aveCol = ((dims[1]-(numcols+1))/numcols)
-		return sizes, setMax, aveCol, numcols
+		return sizes, setMax, aveCol
 
 	def printtable(self, result, window, startRow):
 		dims = window.getmaxyx()
@@ -211,7 +211,7 @@ class displayQueries(object):
 			printRange = (startRow * displayRows) + displayRows
 		for i in range((startRow * displayRows), printRange):
 			header.append(list(table[i]))
-		maxWidth, setCol, colAve, x = self.getColSizes(window, header)
+		maxWidth, setCol, colAve = self.getColSizes(window, header)
 		for row in header:
 			for column in row:
 				if setCol == 1:
@@ -222,7 +222,7 @@ class displayQueries(object):
 								abr = tmp[:colAve-3] + "..."	
 								window.addstr(rc*2, 2, abr)
 							else:
-								window.addstr(rc*2, 2, str(colAve))	
+								window.addstr(rc*2, 2, str(column))	
 							colsize.append(colAve+2)
 							curses.textpad.rectangle(window, count, 1, count+2, colsize[cc])
 						else:
