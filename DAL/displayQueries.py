@@ -28,16 +28,16 @@ class displayQueries(object):
 		screen.move((dims[0]+1)-(dims[0]//4), 3)
 		curses.curs_set(1)
 		curses.echo(1)
+		curses.nocbreak()
 		result = ""
 		queryLine = 0
 		while query != "/quit":		
-			
 			query += screen.getstr()
-			screen.clear()
 			if query == "/quit":
 				continue
 			if query != "":
 				if query[len(query) - 1] == ';': 
+					screen.clear()					
 					dwin.clear()	
 					dwin.addstr(1, 1, "(Select \"Enter\" to expand window)", curses.A_UNDERLINE)
 					try:
@@ -51,25 +51,30 @@ class displayQueries(object):
 					except Exception as ex:
 						dwin.addstr(2, 1, str(ex))
 					query = ""
+					qwin.addstr(queryLine + 1, 1, " ")
+					queryLine = 0
+					qwin.addstr(queryLine + 1, 1, "$")
 					curses.panel.update_panels()
 					curses.doupdate()	
 					screen.move((dims[0]+1)-(dims[0]//4), 3)
 					curses.curs_set(1)
 					curses.echo(1)
-					queryLine = 0
 				else:
-					if query[len(query) - 1] != ' ':
-						query += ' '					
-					queryLine += 1					
-					curses.panel.update_panels()
-					curses.doupdate()	
+					while query[len(query) - 1] == ' ':
+						query = query[:-1]
+					query += " "										
+					qwin.addstr(queryLine + 1, 1, " ")					
+					queryLine += 1
+					if queryLine > (dims[0]/4 - 3):
+						screen.clear()
+						queryLine = 0					
+					qwin.addstr(queryLine + 1, 1, "$")
+					curses.panel.update_panels()						
 					screen.move((dims[0]+1)-(dims[0]//4) + queryLine, 3)
-					curses.curs_set(1)
-					curses.echo(1)
 
 			else:
-
-				if result != "":
+				screen.clear()
+				if result != "":					
 					dwin.clear()
 					dwin.addstr(1, 1, "(Press \"Tab\" to query)", curses.A_UNDERLINE)
 					self.printtable(result,dwin,0)
