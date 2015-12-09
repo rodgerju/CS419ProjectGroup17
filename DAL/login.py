@@ -25,7 +25,7 @@ class login(object):
 
 		selection = -1
 		option = 0
-		port = ""
+		port = 0
 		username = ""
 		password = ""
 		dbtype = ""
@@ -75,13 +75,13 @@ class login(object):
 				option += 1
 
 			elif selection == 5:
-				port = self.getInput(selection-3, display, self.screen, dims, len(port))
+				port = self.getInput(selection-3, display, self.screen, dims, len(str(port)))		
 				selection = -1	
 				option += 1			
 			elif selection == 6:
 			#	self.credentials = Credentials("cs", "password", "db4free.net", "cs419mysqldb") 
-			#	self.credentials = Credentials(username,password,hostname,int(port),dbname) 				
-				self.credentials = Credentials("kzwjzqlulxolgt", "2oPmzkAWGOIwc9GlauZa26jeBW", "ec2-54-204-40-209.compute-1.amazonaws.com", "5432", "d38ker1opds5h3") 
+				self.credentials = Credentials(username,password,hostname,int(port),dbname) 				
+			#	self.credentials = Credentials("kzwjzqlulxolgt", "2oPmzkAWGOIwc9GlauZa26jeBW", "ec2-54-204-40-209.compute-1.amazonaws.com", "5432", "d38ker1opds5h3") 
 				if self.checkInput(self.credentials, dbtype) != 0:
 					dbFactory = DBFactory.DBFactory()
 					database = dbFactory.resolve(dbtype)					

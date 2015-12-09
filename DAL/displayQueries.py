@@ -5,6 +5,7 @@ import time
 import sys
 import DBFactory
 from Credentials import Credentials
+#displayRows = 2
 
 class displayQueries(object):
 
@@ -28,7 +29,6 @@ class displayQueries(object):
 		screen.move((dims[0]+1)-(dims[0]//4), 3)
 		curses.curs_set(1)
 		curses.echo(1)
-		curses.nocbreak()
 		result = ""
 		queryLine = 0
 		while query != "/quit":		
@@ -104,6 +104,7 @@ class displayQueries(object):
 		return tableWin
 
 	def pagination(self, screen, dwin, result):
+		displayRows = 2		
 		dims = screen.getmaxyx()	
 		selection = -1		
 		option = 0
@@ -137,7 +138,7 @@ class displayQueries(object):
 				selection = -1
 			elif selection == 0:
 				pageNum += 1
-				if pageNum * 3 >= result.getrowcount():
+				if pageNum * displayRows >= result.getrowcount():
 					pageNum -= 1				
 				dwin.clear()	
 				dwin.addstr(1, 1, "(Press \"Tab\" to query)", curses.A_UNDERLINE)
@@ -201,7 +202,6 @@ class displayQueries(object):
 	def printtable(self, result, window, startRow):
 		dims = window.getmaxyx()
 		window.box()
-		displayRows = 3
 		header = 0
 		table = 0
 		header = list(result.getheader())
@@ -210,6 +210,7 @@ class displayQueries(object):
 		cc = 0
 		count = 3 
 		colsize = []
+		displayRows = 2
 		if result.getrowcount() < (startRow * displayRows) + displayRows:
 			printRange = result.getrowcount()
 		else:
