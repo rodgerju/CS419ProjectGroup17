@@ -22,7 +22,7 @@ class MySQLDB(AbstractDatabase):
 	def query(self, credentials, query):
 		try:
 			conn = MySQLdb.connect(host=credentials.host, 
-			port = Credentials.port,
+			port = credentials.port,
 			user = credentials.username, 
 			passwd= credentials.password, 
 			db = credentials.dbname, cursorclass=cursors.SSCursor)
