@@ -14,10 +14,10 @@ class displayQueries(object):
 		query = ""
 		screen.clear()
 
-		data = ["Table 1", "Table 2", "Table 3", "Table 4", "Table 5", "Table 6", "Table 7", "Table 8", "Table 9", "Table 10"]
-		twin = self.tableScreen(screen, data)		
+		twin = self.tableScreen(screen)		
 		qwin = self.queryScreen(screen)
 		dwin = self.displayScreen(screen)
+		self.printnames(twin, credentials, database)
 
 		paneld = curses.panel.new_panel(dwin)
 		panelq = curses.panel.new_panel(qwin)
@@ -42,8 +42,10 @@ class displayQueries(object):
 					dwin.addstr(1, 1, "(Select \"Enter\" to expand window)", curses.A_UNDERLINE)
 					try:
 						curses.panel.update_panels()
-						curses.doupdate()					
+						curses.doupdate()
 						result = database.query(credentials, query)
+						if("create" in query):
+							self.printnames(twin, credentials, database)
 						if(result.getrowcount() > 0):
 							self.printtable(result,dwin,0)
 						else:
@@ -87,15 +89,35 @@ class displayQueries(object):
 				curses.curs_set(1)
 				curses.echo(1)
 
-	def tableScreen(self, screen, newData):
+	def printnames(self, win, credentials, database):
+		i = 0		
+		win.addstr(1, 2, "DB-Tables:", curses.A_UNDERLINE)
+		if credentials.dbtype == "MySql":
+			tblquery = "select table_name from information_schema.tables where table_schema = \"" + credentials.dbname + "\";"
+			newData = database.query(credentials, tblquery)
+			names = newData.getnames()
+			if names:
+				for row in names:
+					tbl =  str(i+1) + "." + " " + str(row).strip("',()") 
+					win.addstr(i+3, 2, tbl)
+					i+=1
+		else:
+			tblquery = "select table_name, table_type from information_schema.tables where table_schema =\'public\';"
+			newData = database.query(credentials, tblquery)
+			names = newData.getnames()
+			if names:
+				for row in names:
+					for col in row[:1]:
+						tbl =  str(i+1) + "." + " " + str(col).strip("',()") 
+						win.addstr(i+3, 2, tbl)
+					i+=1	
+
+	def tableScreen(self, screen):
 		dims = screen.getmaxyx()
+		i = 0
 		begin = dims[1]-(dims[1]//4)
 		tableWin = curses.newwin((dims[0]-(dims[0]//4)), (dims[1]//4), 0, begin)
 		tableWin.box()
-		tableWin.addstr(1, 2, "DB-Tables:", curses.A_UNDERLINE)
-		if newData:
-			for i in range(len(newData)):
-				tableWin.addstr(i+3, 2, newData[i])
 		return tableWin
 
 	def pagination(self, screen, dwin, result):

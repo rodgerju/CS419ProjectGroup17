@@ -34,6 +34,10 @@ class MySQLDB(AbstractDatabase):
 			if (command != "select"):
 				self.commitchanges(conn)	
 				result.rowsaffected(cursor)
+			elif (command == "create"):
+				result.populatenames(cursor)
+			elif ("select table_name from information_schema.tables" in query):
+				result.populatenames(cursor)
 			else:
 				result.populatetable(cursor)			
 			cursor.close()
