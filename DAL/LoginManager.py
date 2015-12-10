@@ -6,7 +6,7 @@ import DBFactory
 from Credentials import Credentials
 import QueryService
 
-class login(object):
+class LoginManager(object):
 
 	def __init__(self):
 		self.credentials = 0
@@ -76,12 +76,16 @@ class login(object):
 
 			elif selection == 5:
 				port = self.getInput(selection-3, display, self.screen, dims, len(str(port)))		
+				try:
+					int(port)
+				except:
+					port = 3307
 				selection = -1	
 				option += 1			
 			elif selection == 6:
 			#	self.credentials = Credentials("cs", "password", "db4free.net", "cs419mysqldb") 
-				#self.credentials = Credentials(username,password,hostname,int(port),dbname,dbtype) 				
-				self.credentials = Credentials("kzwjzqlulxolgt", "2oPmzkAWGOIwc9GlauZa26jeBW", "ec2-54-204-40-209.compute-1.amazonaws.com", "5432", "d38ker1opds5h3", "PostgreSQL") 
+				self.credentials = Credentials(username,password,hostname, port,dbname,dbtype) 				
+				#self.credentials = Credentials("kzwjzqlulxolgt", "2oPmzkAWGOIwc9GlauZa26jeBW", "ec2-54-204-40-209.compute-1.amazonaws.com", "5432", "d38ker1opds5h3", "PostgreSQL") 
 				if self.checkInput(self.credentials, dbtype) != 0:
 					dbFactory = DBFactory.DBFactory()
 					database = dbFactory.resolve(dbtype)					
@@ -161,11 +165,11 @@ class login(object):
 	def printMenu(self, screen, dims, option):		
 		graphics = [0]*8
 		graphics[option] = curses.A_REVERSE
-		self.screen.addstr((dims[0]/2)-3, dims[1]/3, 'Username', graphics[0])
-		self.screen.addstr((dims[0]/2)-2, dims[1]/3, 'Password', graphics[1])
-		self.screen.addstr((dims[0]/2)-1, dims[1]/3, 'Database', graphics[2])
-		self.screen.addstr((dims[0]/2), dims[1]/3, 'DB Name', graphics[3])
-		self.screen.addstr((dims[0]/2)+1, dims[1]/3, 'Hostname', graphics[4])
+		self.screen.addstr((dims[0]/2)-3, dims[1]/3, 'Username*', graphics[0])
+		self.screen.addstr((dims[0]/2)-2, dims[1]/3, 'Password*', graphics[1])
+		self.screen.addstr((dims[0]/2)-1, dims[1]/3, 'Database*', graphics[2])
+		self.screen.addstr((dims[0]/2), dims[1]/3, 'DB Name*', graphics[3])
+		self.screen.addstr((dims[0]/2)+1, dims[1]/3, 'Hostname*', graphics[4])
 		self.screen.addstr((dims[0]/2)+2, dims[1]/3, 'Port', graphics[5])
 		self.screen.addstr((dims[0]/2)+3, dims[1]/3, 'Login', graphics[6])
 		self.screen.addstr((dims[0]/2)+4, dims[1]/3, 'Exit', graphics[7])	
