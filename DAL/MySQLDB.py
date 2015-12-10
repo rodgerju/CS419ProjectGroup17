@@ -7,17 +7,17 @@ import re
 
 class MySQLDB(AbstractDatabase):
 
-	def connect(self, Credentials):		
+	def connect(self, credentials):		
 		try:
-			db = MySQLdb.connect(host=Credentials.host, 
-			port = Credentials.port,
-			user = Credentials.username, 
-			passwd= Credentials.password, 
-			db = Credentials.dbname, cursorclass=cursors.SSCursor)
+			db = MySQLdb.connect(host=credentials.host, 
+			port = credentials.port,
+			user = credentials.username, 
+			passwd= credentials.password, 
+			db = credentials.dbname, cursorclass=cursors.SSCursor)
 			db.close()
 			return True
-		except:
-			return False		
+		except Exception as ex:
+			raise ex		
 
 	def query(self, credentials, query):
 		try:

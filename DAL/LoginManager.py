@@ -4,7 +4,7 @@ import time
 import sys
 import DBFactory
 from Credentials import Credentials
-import displayQueries
+import QueryService
 
 class login(object):
 

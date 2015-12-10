@@ -7,14 +7,14 @@ import sys
 
 class PostgreSQL(AbstractDatabase):
 
-	def connect(self, Credentials):
+	def connect(self, credentials):
 		try:
 			db = None
-			db = psycopg2.connect(database=Credentials.dbname,
-			user = Credentials.username, 
-			password= Credentials.password, 
-			host=Credentials.host, 
-			port = Credentials.port)
+			db = psycopg2.connect(database=credentials.dbname,
+			user = credentials.username, 
+			password= credentials.password, 
+			host=credentials.host, 
+			port = credentials.port)
 			return True
 		except Exception as ex:
 			raise ex	
@@ -22,14 +22,14 @@ class PostgreSQL(AbstractDatabase):
 			if db:
 				db.close()
 
-	def query(self, Credentials, query):
+	def query(self, credentials, query):
 		try:
 			db = None
-			db = psycopg2.connect(database=Credentials.dbname,
-			user = Credentials.username, 
-			password= Credentials.password, 
-			host=Credentials.host, 
-			port = Credentials.port)
+			db = psycopg2.connect(database=credentials.dbname,
+			user = credentials.username, 
+			password= credentials.password, 
+			host=credentials.host, 
+			port = credentials.port)
 			cursor = db.cursor()
 			cursor.execute(query)
 			

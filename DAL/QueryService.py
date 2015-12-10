@@ -7,7 +7,7 @@ import DBFactory
 from Credentials import Credentials
 #displayRows = 2
 
-class displayQueries(object):
+class QueryService(object):
 
 	def querySession(self, screen, credentials, database):
 		dims = screen.getmaxyx()
