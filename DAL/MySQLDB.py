@@ -34,7 +34,7 @@ class MySQLDB(AbstractDatabase):
 			if (command != "select"):
 				self.commitchanges(conn)	
 				result.rowsaffected(cursor)
-			elif (command == "create"):
+			elif(command == "create" or command == "drop"):
 				result.populatenames(cursor)
 			elif ("select table_name from information_schema.tables" in query):
 				result.populatenames(cursor)

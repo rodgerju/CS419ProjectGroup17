@@ -5,7 +5,6 @@ import time
 import sys
 import DBFactory
 from Credentials import Credentials
-#displayRows = 2
 
 class QueryService(object):
 
@@ -41,10 +40,19 @@ class QueryService(object):
 					dwin.clear()	
 					dwin.addstr(1, 1, "(Select \"Enter\" to expand window)", curses.A_UNDERLINE)
 					try:
+						query = query.lower()						
 						curses.panel.update_panels()
 						curses.doupdate()
 						result = database.query(credentials, query)
 						if("create" in query):
+							twin.clear()
+							twin.box()
+							dwin.box()
+							self.printnames(twin, credentials, database)
+						elif("drop" in query):
+							twin.clear()
+							twin.box()
+							dwin.box()
 							self.printnames(twin, credentials, database)
 						if(result.getrowcount() > 0):
 							self.printtable(result,dwin,0)
